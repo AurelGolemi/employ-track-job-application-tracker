@@ -8,9 +8,7 @@ export default function Home() {
       <Header />
 
       <main className="bg-white dark:bg-black">
-        {/* Hero */}
         <section className="relative overflow-hidden">
-          {/* Mesh gradient backdrop — Vercel signature decoration, hero scale only */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-140 opacity-40 dark:opacity-30 blur-3xl"
@@ -27,11 +25,6 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
               <div className="lg:col-span-6">
-                <p className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-sm text-neutral-600 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-400">
-                  <span className="inline-block h-2 w-2 rounded-full bg-neutral-900 dark:bg-white" />
-                  Free job application tracker for serious job seekers
-                </p>
-
                 <h1 className="mt-5 text-4xl sm:text-5xl font-semibold tracking-[-0.03em] text-neutral-900 dark:text-white">
                   Track your job search &amp; get hired faster.
                 </h1>
