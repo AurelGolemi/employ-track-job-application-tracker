@@ -8,8 +8,8 @@ import { useAccountActions } from "../../lib/hooks/useAccountActions";
 
 const NAV_LINKS = [
   { href: "/job-application-tracker", label: "Job Application Tracker" },
-  { href: "/ai-copilot", label: "AI Copilot" },
   { href: "/interview-prep", label: "Interview Prep" },
+  { href: "/ai-copilot", label: "AI Copilot" },
 ];
 
 const focus =

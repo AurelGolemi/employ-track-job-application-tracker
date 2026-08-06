@@ -11,7 +11,7 @@ const COLUMNS = [
     title: "Product",
     links: [
       { href: "/job-application-tracker", label: "Job Tracker" },
-      { href: "/resume-builder", label: "Resume Builder" },
+      { href: "/interview-prep", label: "Interview Prep" },
       { href: "/ai-copilot", label: "AI Copilot" },
     ],
   },
