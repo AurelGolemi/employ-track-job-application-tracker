@@ -264,7 +264,7 @@ export default function Home() {
               <div className="lg:col-span-6">
                 <div className="relative rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
                   <Image
-                    src="/job-insights-keywords.webp"
+                    src="/ai-copilot-image.png"
                     alt="Job insights keywords and skills"
                     width={720}
                     height={540}

@@ -1,12 +1,12 @@
 import Header from "@/app/Components/shared/Header";
 import Footer from "@/app/Components/shared/Footer";
 import AccordionItem from "./AccordionItem";
-import { BEHAVIORAL, TECHNICAL, COMPANY_PLAYBOOKS } from "./data";
+import { BEHAVIORAL, TECHNICAL, STACK_TRACKS } from "./data";
 
 const SECTIONS = [
   { id: "behavioral", label: "Behavioral" },
   { id: "technical", label: "Technical" },
-  { id: "companies", label: "Company playbooks" },
+  { id: "stacks", label: "Popular stacks" },
 ];
 
 export default function InterviewPrepPage() {
@@ -21,12 +21,11 @@ export default function InterviewPrepPage() {
               Interview Prep
             </p>
             <h1 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-[-0.02em] text-neutral-900 dark:text-white">
-              Questions & answers, from FAANG to Greek consulting firms.
+              Interview prep for the stacks behind today&apos;s software.
             </h1>
             <p className="mt-4 text-lg text-neutral-500 dark:text-neutral-400 max-w-2xl">
-              {`Behavioral and technical questions that show up across almost every
-              interview, plus company-specific playbooks for the kinds of
-              places you're actually applying to.`}
+              Build confidence with universal interview fundamentals and focused
+              starting points for widely used software and AI engineering stacks.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
@@ -50,8 +49,8 @@ export default function InterviewPrepPage() {
               Behavioral & culture-fit
             </h2>
             <p className="mt-2 text-neutral-500 dark:text-neutral-400">
-              Universal across FAANG, consulting, and startups — only the
-              scoring rubric changes.
+              Whether you&apos;re self-taught, studying, changing careers, or already
+              building software, clear examples and thoughtful communication matter.
             </p>
             <div className="mt-6 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black px-6">
               {BEHAVIORAL.map((item) => (
@@ -68,8 +67,8 @@ export default function InterviewPrepPage() {
               Technical fundamentals
             </h2>
             <p className="mt-2 text-neutral-500 dark:text-neutral-400">
-              JS, React, Next.js, SQL, and Git basics that come up for junior
-              full-stack roles regardless of company size.
+              Core concepts that travel across languages, frameworks, databases,
+              and the responsible use of AI coding tools.
             </p>
             <div className="mt-6 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 px-6">
               {TECHNICAL.map((item) => (
@@ -79,54 +78,54 @@ export default function InterviewPrepPage() {
           </div>
         </section>
 
-        {/* Company playbooks */}
-        <section id="companies" className="py-14 sm:py-16 bg-neutral-50 dark:bg-neutral-950">
+        {/* Popular stacks */}
+        <section id="stacks" className="py-14 sm:py-16 bg-neutral-50 dark:bg-neutral-950">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-semibold tracking-[-0.02em] text-neutral-900 dark:text-white">
-              Company playbooks
+              Popular software engineering & AI stacks
             </h2>
             <p className="mt-2 text-neutral-500 dark:text-neutral-400">
-              How the process and bar actually differ by company type.
+              Explore common ecosystems, including building AI-powered features
+              and working effectively with coding agents. You do not need to
+              know every stack—start with the one that fits the role you want.
             </p>
 
-            <div className="mt-6 space-y-6">
-              {COMPANY_PLAYBOOKS.map((c) => (
-                <div
-                  key={c.name}
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {STACK_TRACKS.map((stack) => (
+                <article
+                  key={stack.name}
                   className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-black p-6"
                 >
-                  <h3 className="text-base font-semibold text-neutral-900 dark:text-white">{c.name}</h3>
-                  <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{c.blurb}</p>
-
-                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <p className="text-xs font-mono uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-                        Process
-                      </p>
-                      <ol className="mt-2 space-y-2">
-                        {c.stages.map((stage, i) => (
-                          <li key={stage} className="flex gap-2 text-sm text-neutral-600 dark:text-neutral-300">
-                            <span className="shrink-0 font-mono text-neutral-400 dark:text-neutral-600">{i + 1}.</span>
-                            {stage}
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                    <div>
-                      <p className="text-xs font-mono uppercase tracking-wide text-neutral-400 dark:text-neutral-500">
-                        Tips
-                      </p>
-                      <ul className="mt-2 space-y-2">
-                        {c.tips.map((tip) => (
-                          <li key={tip} className="flex gap-2 text-sm text-neutral-600 dark:text-neutral-300">
-                            <span className="shrink-0 text-neutral-400 dark:text-neutral-600">✦</span>
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                  <h3 className="text-base font-semibold text-neutral-900 dark:text-white">
+                    {stack.name}
+                  </h3>
+                  <p className="mt-1 text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+                    {stack.blurb}
+                  </p>
+                  <ul aria-label={`${stack.name} technologies`} className="mt-4 flex flex-wrap gap-2">
+                    {stack.technologies.map((technology) => (
+                      <li
+                        key={technology}
+                        className="rounded-full border border-neutral-200 dark:border-neutral-800 px-2.5 py-1 text-xs text-neutral-700 dark:text-neutral-300"
+                      >
+                        {technology}
+                      </li>
+                    ))}
+                  </ul>
+                  <h4 className="mt-5 text-xs font-mono uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                    Interview focus
+                  </h4>
+                  <ul className="mt-2 space-y-2">
+                    {stack.focus.map((topic) => (
+                      <li key={topic} className="flex gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+                        <span className="shrink-0 text-neutral-400 dark:text-neutral-600" aria-hidden="true">
+                          &bull;
+                        </span>
+                        {topic}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
               ))}
             </div>
           </div>
