@@ -30,6 +30,11 @@ const savedChatsSchema = z.object({
   activeChatId: z.string().nullable(),
   chats: z.array(conversationSchema),
 });
+const streamEventSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("text"), text: z.string() }),
+  z.object({ type: z.literal("error"), message: z.string() }),
+  z.object({ type: z.literal("status"), message: z.string() }),
+]);
 
 const quickPrompts = [
   "Rewrite my intro for a senior product role",
@@ -73,6 +78,7 @@ export function CopilotChat() {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [chatErrors, setChatErrors] = useState<Record<string, string>>({});
+  const [chatStatuses, setChatStatuses] = useState<Record<string, string>>({});
   const [pendingChatIds, setPendingChatIds] = useState<Set<string>>(new Set());
   const [storageError, setStorageError] = useState<string | null>(null);
   const [storageReady, setStorageReady] = useState(false);
@@ -155,6 +161,11 @@ export function CopilotChat() {
       delete next[chatId];
       return next;
     });
+    setChatStatuses((current) => {
+      const next = { ...current };
+      delete next[chatId];
+      return next;
+    });
 
     if (activeChatId === chatId) {
       setActiveChatId(
@@ -228,6 +239,8 @@ export function CopilotChat() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let receivedText = "";
+      let buffer = "";
+      let streamError: string | null = null;
 
       function appendChunk(chunk: string) {
         if (!chunk) return;
@@ -248,13 +261,47 @@ export function CopilotChat() {
         );
       }
 
+      function processEvent(line: string) {
+        if (!line.trim()) return;
+
+        let payload: unknown;
+        try {
+          payload = JSON.parse(line);
+        } catch {
+          throw new Error("The Copilot returned an invalid streaming response.");
+        }
+
+        const event = streamEventSchema.safeParse(payload);
+        if (!event.success) {
+          throw new Error("The Copilot returned an invalid streaming response.");
+        }
+
+        const streamEvent = event.data;
+        if (streamEvent.type === "text") {
+          appendChunk(streamEvent.text);
+        } else if (streamEvent.type === "status") {
+          const message = streamEvent.message;
+          setChatStatuses((current) => ({
+            ...current,
+            [chatId]: message,
+          }));
+        } else {
+          streamError = streamEvent.message;
+        }
+      }
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        appendChunk(decoder.decode(value, { stream: true }));
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) processEvent(line);
       }
 
-      appendChunk(decoder.decode());
+      buffer += decoder.decode();
+      processEvent(buffer);
+      if (streamError) throw new Error(streamError);
       if (!receivedText.trim()) {
         throw new Error(emptyResponseMessage);
       }
@@ -373,9 +420,11 @@ export function CopilotChat() {
               {activeChat?.title ?? "AI Copilot"}
             </p>
             <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-              {isPending
-                ? "Generating a response…"
-                : "Ask about your applications or next steps"}
+              {activeChatId && chatStatuses[activeChatId]
+                ? chatStatuses[activeChatId]
+                : isPending
+                  ? "Generating a response…"
+                  : "Ask about your applications or next steps"}
             </p>
           </div>
           {isPending && activeChatId && (

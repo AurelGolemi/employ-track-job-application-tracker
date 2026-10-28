@@ -1,1 +1,1 @@
-export { getModel } from "@/lib/ai/provider";
+export { getModels } from "@/lib/ai/provider";
