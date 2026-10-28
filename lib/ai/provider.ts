@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   AI_PROVIDER: z.enum(["google"]).default("google"),
-  AI_MODEL: z.string().trim().min(1).default("gemini-2.5-flash"),
+  AI_MODEL: z.string().trim().min(1).default("gemini-3.8-flash"),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().trim().min(1),
 });
 

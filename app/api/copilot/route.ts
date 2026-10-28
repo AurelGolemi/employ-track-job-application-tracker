@@ -14,7 +14,7 @@ const requestSchema = z
         }),
       )
       .min(1)
-      .max(24),
+      .max(12),
   })
   .strict()
   .refine((body) => body.messages.at(-1)?.role === "user", {
@@ -63,7 +63,21 @@ export async function POST(request: Request) {
     system: getSystemPrompt(),
     messages: parsed.data.messages,
     tools: buildTools(session.user.id),
-    stopWhen: stepCountIs(3),
+    stopWhen: stepCountIs(2),
+    maxOutputTokens: 1024,
+    maxRetries: 1,
+    abortSignal: request.signal,
+    timeout: {
+      firstChunkMs: 45_000,
+      chunkMs: 30_000,
+      totalMs: 90_000,
+      tools: { searchApplicationsMs: 10_000 },
+    },
+    providerOptions: {
+      google: {
+        thinkingConfig: { thinkingLevel: "low" },
+      },
+    },
   });
 
   return createTextStreamResponse({ stream: result.textStream });

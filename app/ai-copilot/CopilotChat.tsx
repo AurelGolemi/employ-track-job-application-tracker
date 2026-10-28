@@ -172,7 +172,7 @@ export function CopilotChat() {
 
     const history = chat.messages
       .filter((message) => message.content.trim())
-      .slice(-23);
+      .slice(-11);
     const conversation: Message[] = [...history, { role: "user", content }];
     const assistantIndex = conversation.length;
     setChats((current) =>
@@ -202,6 +202,11 @@ export function CopilotChat() {
     const controller = new AbortController();
     controllersRef.current.set(chatId, controller);
     setPendingChatIds((current) => new Set(current).add(chatId));
+    let timedOut = false;
+    const requestTimeout = window.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 95_000);
 
     try {
       const response = await fetch("/api/copilot", {
@@ -255,6 +260,13 @@ export function CopilotChat() {
       }
     } catch (caught) {
       if (controller.signal.aborted) {
+        if (timedOut) {
+          setChatErrors((current) => ({
+            ...current,
+            [chatId]:
+              "The Copilot took too long to respond. Please try again.",
+          }));
+        }
         setChats((current) =>
           current.map((item) =>
             item.id === chatId
@@ -289,6 +301,7 @@ export function CopilotChat() {
         ),
       );
     } finally {
+      window.clearTimeout(requestTimeout);
       controllersRef.current.delete(chatId);
       setPendingChatIds((current) => {
         const next = new Set(current);
