@@ -142,6 +142,28 @@ export function CopilotChat() {
     setInput("");
   }
 
+  function deleteChat(chatId: string) {
+    const remainingChats = chats.filter((chat) => chat.id !== chatId);
+    const deletedIndex = chats.findIndex((chat) => chat.id === chatId);
+    const nextChats =
+      remainingChats.length > 0 ? remainingChats : [createConversation()];
+
+    controllersRef.current.get(chatId)?.abort();
+    setChats(nextChats);
+    setChatErrors((current) => {
+      const next = { ...current };
+      delete next[chatId];
+      return next;
+    });
+
+    if (activeChatId === chatId) {
+      setActiveChatId(
+        nextChats[Math.min(deletedIndex, nextChats.length - 1)]?.id ?? null,
+      );
+      setInput("");
+    }
+  }
+
   async function sendMessage(prompt: string) {
     const content = prompt.trim();
     const chat = chats.find((item) => item.id === activeChatId);
@@ -232,7 +254,7 @@ export function CopilotChat() {
         throw new Error(emptyResponseMessage);
       }
     } catch (caught) {
-      if (caught instanceof DOMException && caught.name === "AbortError") {
+      if (controller.signal.aborted) {
         setChats((current) =>
           current.map((item) =>
             item.id === chatId
@@ -301,19 +323,32 @@ export function CopilotChat() {
           className="flex min-h-0 flex-col gap-1 overflow-y-auto"
         >
           {chats.map((chat) => (
-            <button
+            <div
               key={chat.id}
-              type="button"
-              aria-current={chat.id === activeChatId ? "page" : undefined}
-              onClick={() => selectChat(chat.id)}
-              className={`w-full truncate rounded-lg px-3 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white ${
+              className={`group flex items-center rounded-lg transition-colors ${
                 chat.id === activeChatId
-                  ? "bg-neutral-100 font-medium dark:bg-neutral-800"
+                  ? "bg-neutral-100 dark:bg-neutral-800"
                   : "text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
               }`}
             >
-              {chat.title}
-            </button>
+              <button
+                type="button"
+                aria-current={chat.id === activeChatId ? "page" : undefined}
+                onClick={() => selectChat(chat.id)}
+                className="min-w-0 flex-1 truncate rounded-l-lg px-3 py-2.5 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white"
+              >
+                {chat.title}
+              </button>
+              <button
+                type="button"
+                aria-label={`Delete ${chat.title}`}
+                title={`Delete ${chat.title}`}
+                onClick={() => deleteChat(chat.id)}
+                className="mr-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-500 opacity-70 transition-colors hover:bg-neutral-200 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-white dark:focus-visible:ring-white"
+              >
+                <span aria-hidden="true" className="text-lg leading-none">×</span>
+              </button>
+            </div>
           ))}
         </nav>
       </aside>
